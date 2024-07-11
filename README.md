@@ -17,7 +17,7 @@ Assignment Tracker is a desktop application designed to help manage assignments 
 
 ### Download and Install
 
-1. Go to the [latest release](https://github.com/yourusername/your-repo-name/releases/latest) on GitHub.
+1. Go to the [latest release](https://github.com/DoubtfulChicken/AssignmentTracker/releases) on GitHub.
 2. Download the `AssignmentTracker.zip` file from the assets section.
 3. Extract the downloaded zip file to a directory of your choice.
 4. Run the `AssignmentTracker.exe` file to start the application.
