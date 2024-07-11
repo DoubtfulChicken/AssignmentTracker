@@ -117,6 +117,15 @@ Assignment Tracker is a desktop application designed to help manage assignments 
 3. Commit your changes and push to your branch.
 4. Open a pull request with a detailed description of your changes.
 
+## Planned Features
+
+- **Excel Export**: .
+- **Cloud Sync**: 
+- **Collaborative Features**:
+- **Advanced Notifications**:
+- **Analytics Dashboard**:
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
