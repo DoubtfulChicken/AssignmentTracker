@@ -1,0 +1,13 @@
+﻿<Window x:Class="AssignmentTracker.Views.InputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Input" Height="150" Width="300">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock x:Name="PromptTextBlock" Margin="0,0,0,10"/>
+            <ComboBox x:Name="InputComboBox" Margin="0,0,0,10" Visibility="Collapsed"/>
+            <TextBox x:Name="InputTextBox" Margin="0,0,0,10"/>
+            <Button Content="OK" Width="75" HorizontalAlignment="Right" Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,36 @@
+﻿<Window x:Class="AssignmentTracker.Views.AddAssignmentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Assignment" Height="600" Width="500">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Unit Code" Margin="0,0,0,5"/>
+            <ComboBox x:Name="UnitCodeComboBox" Margin="0,0,0,10" IsEditable="true"/>
+
+            <TextBlock Text="Task Name" Margin="0,0,0,5"/>
+            <TextBox x:Name="TaskNameTextBox" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Task Grade" Margin="0,0,0,5"/>
+            <ComboBox x:Name="TaskGradeComboBox" Margin="0,0,0,10">
+                <ComboBoxItem Content="Pass"/>
+                <ComboBoxItem Content="Credit"/>
+                <ComboBoxItem Content="Distinction"/>
+                <ComboBoxItem Content="High Distinction"/>
+            </ComboBox>
+
+            <TextBlock Text="Start Date" Margin="0,0,0,5"/>
+            <DatePicker x:Name="StartDatePicker" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Due Date" Margin="0,0,0,5"/>
+            <DatePicker x:Name="DueDatePicker" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Notes" Margin="0,0,0,5"/>
+            <TextBox x:Name="NotesTextBox" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Reminder Date" Margin="0,0,0,5"/>
+            <DatePicker x:Name="ReminderDatePicker" Margin="0,0,0,10"/>
+
+            <Button Content="Save" Click="SaveButton_Click" HorizontalAlignment="Right" Width="75"/>
+        </StackPanel>
+    </Grid>
+</Window>
