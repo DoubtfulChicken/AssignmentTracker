@@ -12,8 +12,17 @@ Assignment Tracker is a desktop application designed to help manage assignments 
 - Visualize tasks using a Gantt chart
 - Import assignments from Excel files
 - Customizable unit code and task grade colors
+  
+## Quick Start
 
-## Installation
+### Download and Install
+
+1. Go to the [latest release](https://github.com/yourusername/your-repo-name/releases/latest) on GitHub.
+2. Download the `AssignmentTracker.zip` file from the assets section.
+3. Extract the downloaded zip file to a directory of your choice.
+4. Run the `AssignmentTracker.exe` file to start the application.
+
+## Installation from Source
 
 ### Prerequisites
 
