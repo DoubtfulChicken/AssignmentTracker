@@ -24,8 +24,8 @@ Assignment Tracker is a desktop application designed to help manage assignments 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/DoubtfulChicken/AssignmentTracker
+    cd AssignmentTracker
     ```
 
 2. Restore NuGet packages:
