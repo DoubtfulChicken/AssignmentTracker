@@ -25,6 +25,7 @@ namespace AssignmentTracker
     {
         private readonly AssignmentViewModel viewModel;
         private readonly NotificationManager notificationManager;
+
         private List<string> unitCodes = new List<string>();
         private Dictionary<string, MediaBrush> unitCodeColors = new Dictionary<string, MediaBrush>();
         private Dictionary<string, MediaBrush> gradeColors = new Dictionary<string, MediaBrush>
@@ -47,20 +48,80 @@ namespace AssignmentTracker
             viewModel = new AssignmentViewModel();
             this.DataContext = viewModel;
 
+            LoadAssignments();
+
+            // Populate unit code filter combo box
+            PopulateUnitCodeFilterComboBox();
+
             var dashboard = new DashboardUserControl(viewModel, unitCodeColors);
             DashboardUserControl.Content = dashboard;
 
             notificationManager = new NotificationManager(viewModel.Assignments.ToList());
 
-            LoadAssignments();
+
             CheckForUpcomingAssignments();
 
             AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(GridViewColumnHeader_Click));
 
             MainTabControl = this.FindName("MainTabControl") as System.Windows.Controls.TabControl;
+
+            // Event handlers for filters
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.FilteredAssignments))
+                {
+                    dashboard.RefreshData();
+                }
+            };
         }
 
-        private void CheckForUpcomingAssignments()
+        private void PopulateUnitCodeFilterComboBox()
+        {
+            UnitCodeFilterComboBox.Items.Clear();
+            UnitCodeFilterComboBox.Items.Add(new ComboBoxItem { Content = "All" });
+
+            var distinctUnitCodes = viewModel.Assignments.Select(a => a.UnitCode).Distinct().ToList();
+            foreach (var unitCode in distinctUnitCodes)
+            {
+                UnitCodeFilterComboBox.Items.Add(new ComboBoxItem { Content = unitCode });
+            }
+        }
+
+        private void StatusFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (viewModel == null) return; // Ensure viewModel is not null
+
+            if (StatusFilterComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                switch (selectedItem.Content.ToString())
+                {
+                    case "Not Started":
+                        viewModel.StatusFilter = Assignment.AssignmentStatus.NotStarted;
+                        break;
+                    case "In Progress":
+                        viewModel.StatusFilter = Assignment.AssignmentStatus.InProgress;
+                        break;
+                    case "Completed":
+                        viewModel.StatusFilter = Assignment.AssignmentStatus.Completed;
+                        break;
+                    default:
+                        viewModel.StatusFilter = null;
+                        break;
+                }
+            }
+        }
+
+        private void UnitCodeFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (viewModel == null) return; // Ensure viewModel is not null
+
+            if (UnitCodeFilterComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                viewModel.UnitCodeFilter = selectedItem.Content.ToString() == "All" ? null : selectedItem.Content.ToString();
+            }
+        }
+
+    private void CheckForUpcomingAssignments()
         {
             var upcomingAssignments = viewModel.Assignments
                 .Where(a => a.DueDate <= DateTime.Now.AddDays(10) && a.DueDate >= DateTime.Now)
@@ -109,6 +170,7 @@ namespace AssignmentTracker
 
             ApplyCustomColors();
             RefreshDashboardData();
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void SaveAssignments()
@@ -141,6 +203,7 @@ namespace AssignmentTracker
 
                 ApplyCustomColors();
                 RefreshDashboardData();
+                PopulateUnitCodeFilterComboBox();
             }
         }
 
@@ -173,6 +236,7 @@ namespace AssignmentTracker
 
             CollectionViewSource.GetDefaultView(AssignmentListView.ItemsSource)?.Refresh();
             RefreshDashboardData();
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void SetUnitCodeColour(string unitCode)
@@ -184,6 +248,7 @@ namespace AssignmentTracker
                 unitCodeColors[unitCode] = new SolidColorBrush(MediaColor.FromArgb(color.A, color.R, color.G, color.B));
                 ApplyCustomColors();
                 RefreshDashboardData(); // Ensure data is refreshed
+                PopulateUnitCodeFilterComboBox();
             }
         }
 
@@ -196,6 +261,7 @@ namespace AssignmentTracker
                 gradeColors[taskGrade] = new SolidColorBrush(MediaColor.FromArgb(color.A, color.R, color.G, color.B));
                 ApplyCustomColors();
                 RefreshDashboardData(); // Ensure data is refreshed
+                PopulateUnitCodeFilterComboBox();
             }
         }
 
@@ -268,6 +334,7 @@ namespace AssignmentTracker
             dataView.SortDescriptions.Add(secondarySortDescription);
             dataView.Refresh();
             RefreshDashboardData(); // Ensure data is refreshed
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void SortTaskGrade(ListSortDirection direction)
@@ -283,6 +350,7 @@ namespace AssignmentTracker
 
             dataView.Refresh();
             RefreshDashboardData(); // Ensure data is refreshed
+            PopulateUnitCodeFilterComboBox();
         }
 
         public class NaturalSortComparer : IComparer
@@ -346,6 +414,7 @@ namespace AssignmentTracker
 
             dataView.Refresh();
             RefreshDashboardData(); // Ensure data is refreshed
+            PopulateUnitCodeFilterComboBox();
         }
 
         public class ReverseComparer : IComparer
@@ -518,6 +587,7 @@ namespace AssignmentTracker
             CollectionViewSource.GetDefaultView(AssignmentListView.ItemsSource)?.Refresh();
             ApplyCustomColors();
             RefreshDashboardData();
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void CopyAssignment(Assignment assignment)
@@ -534,6 +604,7 @@ namespace AssignmentTracker
             viewModel.AddAssignment(copiedAssignment);
             ApplyCustomColors();
             RefreshDashboardData();
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void EditAssignment(Assignment assignment)
@@ -555,6 +626,7 @@ namespace AssignmentTracker
 
                 ApplyCustomColors();
                 RefreshDashboardData();
+                PopulateUnitCodeFilterComboBox();
             }
         }
 
@@ -562,6 +634,7 @@ namespace AssignmentTracker
         {
             viewModel.Assignments.Remove(assignment);
             RefreshDashboardData(); // Ensure data is refreshed
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void ImportDataButton_Click(object sender, RoutedEventArgs e)
@@ -577,6 +650,8 @@ namespace AssignmentTracker
                 string filePath = openFileDialog.FileName;
                 ImportDataFromExcel(filePath);
             }
+
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void ImportDataFromExcel(string filePath)
@@ -619,6 +694,7 @@ namespace AssignmentTracker
 
                 ApplyCustomColors();
                 RefreshDashboardData(); // Ensure data is refreshed
+                PopulateUnitCodeFilterComboBox();
             }
         }
 
@@ -688,6 +764,8 @@ namespace AssignmentTracker
             {
                 DeleteAssignment(assignment);
             }
+
+            PopulateUnitCodeFilterComboBox();
         }
 
         private List<Assignment> clipboardAssignments = new List<Assignment>();
@@ -712,6 +790,7 @@ namespace AssignmentTracker
             clipboardAssignments.Clear();
             ApplyCustomColors();
             RefreshDashboardData();
+            PopulateUnitCodeFilterComboBox();
         }
 
         private void AddNewAssignment()

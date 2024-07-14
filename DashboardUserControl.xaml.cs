@@ -31,6 +31,15 @@ namespace AssignmentTracker
             selectedWeekStart = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
             LoadData();
             this.SizeChanged += DashboardUserControl_SizeChanged;
+
+            viewModel.PropertyChanged += ViewModel_PropertyChanged; // Add this line
+        }
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(viewModel.FilteredAssignments))
+            {
+                RefreshData();
+            }
         }
 
         private void DashboardUserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -61,9 +70,9 @@ namespace AssignmentTracker
 
         private void LoadData()
         {
-            if (viewModel == null || viewModel.Assignments == null)
+            if (viewModel == null || viewModel.FilteredAssignments == null)
             {
-                Console.WriteLine("viewModel or Assignments is null");
+                Console.WriteLine("viewModel or FilteredAssignments is null");
                 return;
             }
 
@@ -72,7 +81,8 @@ namespace AssignmentTracker
 
             WeekDateRangeTextBlock.Text = $"{startOfWeek:dd/MM/yyyy} - {endOfWeek:dd/MM/yyyy}";
 
-            var assignmentsDueThisWeek = viewModel.Assignments
+            var assignmentsDueThisWeek = viewModel.FilteredAssignments
+                .Cast<Assignment>()
                 .Where(a => a.DueDate >= startOfWeek && a.DueDate < endOfWeek)
                 .GroupBy(a => a.TaskGrade)
                 .Select(g => new GradeCount { Grade = g.Key, Count = g.Count() })
@@ -102,10 +112,10 @@ namespace AssignmentTracker
             GanttCanvas.Children.Clear();
             DateLabelsCanvas.Children.Clear();
 
-            if (!viewModel.Assignments.Any())
+            if (!viewModel.FilteredAssignments.Cast<Assignment>().Any())
                 return;
 
-            var sortedAssignments = viewModel.Assignments.OrderBy(a => a.StartDate).ToList();
+            var sortedAssignments = viewModel.FilteredAssignments.Cast<Assignment>().OrderBy(a => a.StartDate).ToList();
 
             DateTime minDate = sortedAssignments.Min(a => a.StartDate);
             DateTime maxDate = sortedAssignments.Max(a => a.DueDate);
@@ -192,8 +202,6 @@ namespace AssignmentTracker
                 taskIndex++;
             }
         }
-
-
 
         private void UpdateUnitCodeLegend()
         {

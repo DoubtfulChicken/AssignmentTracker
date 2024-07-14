@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:AssignmentTracker"
         xmlns:conv="clr-namespace:AssignmentTracker.Converters"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="Assignment Tracker" Height="1000" Width="1280">
 
     <Window.Resources>
@@ -15,6 +16,33 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <!-- Custom TextBox with Placeholder -->
+        <Style x:Key="WatermarkTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <TextBox x:Name="textBox" Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock x:Name="watermark"
+                                       Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Foreground="Gray"
+                                       Margin="5,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"
+                                       IsHitTestVisible="False"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <DockPanel>
@@ -22,13 +50,31 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="10">
             <Button Content="Add Assignment" Click="AddAssignmentButton_Click" Margin="5"/>
             <Button Content="Import Data From Spreadsheet" Click="ImportDataButton_Click" Margin="5"/>
+            <!-- Search and Filter Section -->
+            <TextBox Name="SearchTextBox" Width="200" Margin="5"
+                     Style="{StaticResource WatermarkTextBoxStyle}" Tag="Search by Task Name or Unit Code..."
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox Name="StatusFilterComboBox" Width="200" Margin="5"
+                      SelectionChanged="StatusFilterComboBox_SelectionChanged"
+                      Tag="Filter by Status">
+                <ComboBoxItem Content="All" IsSelected="True"/>
+                <ComboBoxItem Content="Not Started" />
+                <ComboBoxItem Content="In Progress" />
+                <ComboBoxItem Content="Completed" />
+            </ComboBox>
+            <ComboBox Name="UnitCodeFilterComboBox" Width="200" Margin="5"
+                      SelectionChanged="UnitCodeFilterComboBox_SelectionChanged"
+                      Tag="Filter by Unit Code">
+                <ComboBoxItem Content="All" IsSelected="True"/>
+                <!-- Populate with actual unit codes dynamically in code-behind -->
+            </ComboBox>
         </StackPanel>
 
         <!-- TabControl for Assignments and Dashboard -->
         <TabControl>
             <TabItem Header="Assignments">
                 <Grid Margin="10">
-                    <ListView ItemsSource="{Binding Assignments}" x:Name="AssignmentListView" MouseRightButtonUp="AssignmentListView_MouseRightButtonUp" HorizontalAlignment="Center">
+                    <ListView ItemsSource="{Binding FilteredAssignments}" x:Name="AssignmentListView" MouseRightButtonUp="AssignmentListView_MouseRightButtonUp" HorizontalAlignment="Center">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>
@@ -105,5 +151,3 @@
         </TabControl>
     </DockPanel>
 </Window>
-    
-    

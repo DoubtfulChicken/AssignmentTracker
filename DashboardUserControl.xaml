@@ -30,7 +30,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Grade" DisplayMemberBinding="{Binding Grade}" Width="200"/>
-                    <GridViewColumn Header="Count" DisplayMemberBinding="{Binding Count}" Width="200"/>
+                    <GridViewColumn Header="Due This Week" DisplayMemberBinding="{Binding Count}" Width="200"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -49,7 +49,7 @@
             </Grid.RowDefinitions>
 
             <!-- Date Labels -->
-            <ScrollViewer x:Name="DateLabelsScrollViewer" Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,15,20,0">
+            <ScrollViewer x:Name="DateLabelsScrollViewer" Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,0,0,-80">
                 <Canvas x:Name="DateLabelsCanvas" Height="30" HorizontalAlignment="Stretch"/>
             </ScrollViewer>
 
